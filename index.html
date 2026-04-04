@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamTracker â Never Miss a New Episode</title>
+    <meta name="description" content="StreamTracker is a free Telegram bot that tracks your favorite TV shows and notifies you when new episodes drop. Find where any show is streaming with one command.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --purple: #7c3aed;
+            --purple-light: #a78bfa;
+            --pink: #ec4899;
+            --blue: #3b82f6;
+            --cyan: #06b6d4;
+            --green: #10b981;
+            --orange: #f59e0b;
+            --bg: #0f0f1a;
+            --bg-card: #1a1a2e;
+            --bg-card-hover: #22223a;
+            --text: #f1f1f6;
+            --text-muted: #9ca3af;
+            --border: #2d2d44;
+            --gradient: linear-gradient(135deg, var(--purple), var(--pink));
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* âââ NAV âââ */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 100;
+            background: rgba(15, 15, 26, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 0.9rem 2rem;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .nav-logo {
+            font-size: 1.25rem; font-weight: 800;
+            background: var(--gradient); -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .nav-cta {
+            background: var(--gradient); color: #fff;
+            padding: 0.5rem 1.25rem; border-radius: 50px;
+            text-decoration: none; font-weight: 600; font-size: 0.9rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(124,58,237,0.4); }
+
+        /* âââ HERO âââ */
+        .hero {
+            min-height: 100vh;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            text-align: center; padding: 6rem 2rem 4rem;
+            position: relative;
+        }
+        .hero::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(ellipse at 50% 30%, rgba(124,58,237,0.15) 0%, transparent 60%),
+                        radial-gradient(ellipse at 80% 60%, rgba(236,72,153,0.08) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: var(--bg-card); border: 1px solid var(--border);
+            padding: 0.4rem 1rem; border-radius: 50px;
+            font-size: 0.85rem; color: var(--text-muted);
+            margin-bottom: 1.5rem;
+        }
+        .hero-badge span { color: var(--green); }
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem); font-weight: 800;
+            line-height: 1.15; max-width: 700px; margin-bottom: 1.25rem;
+        }
+        .hero h1 .highlight {
+            background: var(--gradient); -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            font-size: 1.15rem; color: var(--text-muted);
+            max-width: 520px; margin-bottom: 2rem;
+        }
+        .hero-buttons { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+        .btn-primary {
+            background: var(--gradient); color: #fff;
+            padding: 0.85rem 2rem; border-radius: 50px;
+            text-decoration: none; font-weight: 700; font-size: 1.05rem;
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 30px rgba(124,58,237,0.4); }
+        .btn-secondary {
+            background: var(--bg-card); border: 1px solid var(--border);
+            color: var(--text); padding: 0.85rem 2rem; border-radius: 50px;
+            text-decoration: none; font-weight: 600; font-size: 1.05rem;
+            transition: background 0.2s;
+        }
+        .btn-secondary:hover { background: var(--bg-card-hover); }
+
+        .hero-preview {
+            margin-top: 3rem; max-width: 420px; width: 100%;
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 1.5rem; text-align: left;
+            font-family: monospace; font-size: 0.85rem;
+            color: var(--text-muted); line-height: 1.8;
+        }
+        .hero-preview .cmd { color: var(--cyan); font-weight: 600; }
+        .hero-preview .bot-reply { color: var(--text); }
+        .hero-preview .platform { color: var(--orange); }
+        .hero-preview .link { color: var(--purple-light); text-decoration: underline; }
+
+        /* âââ SECTION LAYOUT âââ */
+        section { padding: 5rem 2rem; }
+        .section-inner { max-width: 1000px; margin: 0 auto; }
+        .section-label {
+            font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.15em;
+            color: var(--purple-light); font-weight: 700; margin-bottom: 0.5rem;
+        }
+        .section-title {
+            font-size: clamp(1.8rem, 4vw, 2.5rem); font-weight: 800;
+            margin-bottom: 1rem;
+        }
+        .section-desc {
+            color: var(--text-muted); font-size: 1.05rem;
+            max-width: 600px; margin-bottom: 3rem;
+        }
+
+        /* âââ FEATURES âââ */
+        .features-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .feature-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 1.75rem;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .feature-card:hover { transform: translateY(-3px); border-color: var(--purple); }
+        .feature-icon {
+            font-size: 2rem; margin-bottom: 0.75rem;
+            width: 48px; height: 48px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(124,58,237,0.1); border-radius: 12px;
+        }
+        .feature-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .feature-card p { color: var(--text-muted); font-size: 0.92rem; }
+
+        /* âââ HOW IT WORKS âââ */
+        .steps {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2rem; counter-reset: step;
+        }
+        .step { text-align: center; position: relative; }
+        .step-number {
+            width: 52px; height: 52px; margin: 0 auto 1rem;
+            background: var(--gradient); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 1.3rem;
+        }
+        .step h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.4rem; }
+        .step p { color: var(--text-muted); font-size: 0.9rem; }
+
+        /* âââ COMMANDS âââ */
+        .commands-list { display: flex; flex-direction: column; gap: 1rem; }
+        .command-row {
+            display: flex; align-items: flex-start; gap: 1rem;
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 12px; padding: 1.25rem 1.5rem;
+            transition: border-color 0.2s;
+        }
+        .command-row:hover { border-color: var(--purple); }
+        .command-name {
+            font-family: 'Courier New', monospace; font-weight: 700;
+            color: var(--cyan); white-space: nowrap; min-width: 140px;
+            font-size: 1rem;
+        }
+        .command-desc { color: var(--text-muted); font-size: 0.92rem; }
+        .command-example {
+            display: inline-block; margin-top: 0.3rem;
+            background: rgba(6,182,212,0.1); color: var(--cyan);
+            padding: 0.15rem 0.6rem; border-radius: 6px;
+            font-family: monospace; font-size: 0.8rem;
+        }
+
+        /* âââ FAQ âââ */
+        .faq-list { display: flex; flex-direction: column; gap: 1rem; }
+        .faq-item {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 12px; overflow: hidden;
+        }
+        .faq-question {
+            padding: 1.25rem 1.5rem; cursor: pointer;
+            display: flex; justify-content: space-between; align-items: center;
+            font-weight: 600; font-size: 1rem;
+            user-select: none;
+        }
+        .faq-question:hover { background: var(--bg-card-hover); }
+        .faq-arrow { transition: transform 0.3s; font-size: 1.2rem; color: var(--text-muted); }
+        .faq-item.open .faq-arrow { transform: rotate(180deg); }
+        .faq-answer {
+            max-height: 0; overflow: hidden;
+            transition: max-height 0.35s ease, padding 0.35s ease;
+            padding: 0 1.5rem;
+            color: var(--text-muted); font-size: 0.92rem; line-height: 1.7;
+        }
+        .faq-item.open .faq-answer {
+            max-height: 300px; padding: 0 1.5rem 1.25rem;
+        }
+
+        /* âââ CTA âââ */
+        .cta-section {
+            text-align: center;
+            background: linear-gradient(180deg, transparent 0%, rgba(124,58,237,0.05) 100%);
+        }
+        .cta-section .section-title { max-width: 500px; margin: 0 auto 1rem; }
+        .cta-section p { max-width: 450px; margin: 0 auto 2rem; color: var(--text-muted); }
+
+        /* âââ FOOTER âââ */
+        footer {
+            text-align: center; padding: 2.5rem 2rem;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted); font-size: 0.85rem;
+        }
+        footer a { color: var(--purple-light); text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+
+        /* âââ RESPONSIVE âââ */
+        @media (max-width: 640px) {
+            nav { padding: 0.75rem 1.25rem; }
+            section { padding: 3.5rem 1.25rem; }
+            .command-row { flex-direction: column; gap: 0.4rem; }
+            .command-name { min-width: auto; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+    <div class="nav-logo">StreamTracker</div>
+    <a class="nav-cta" href="https://t.me/StreamTrackerBot">Open in Telegram</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <div class="hero-badge">
+        <span>&#9679;</span> Free &amp; live on Telegram
+    </div>
+    <h1>Never miss a <span class="highlight">new episode</span> again</h1>
+    <p>StreamTracker is a Telegram bot that tracks your shows, tells you where they're streaming, and pings you when new episodes drop.</p>
+    <div class="hero-buttons">
+        <a class="btn-primary" href="https://t.me/StreamTrackerBot">
+            &#x1F4F1; Start Tracking
+        </a>
+        <a class="btn-secondary" href="#how-it-works">See How It Works</a>
+    </div>
+
+    <div class="hero-preview">
+        <div><span class="cmd">/find</span> Breaking Bad</div>
+        <br>
+        <div class="bot-reply">
+            &#x1F4FA; <strong>Breaking Bad</strong><br><br>
+            <strong>Available on:</strong><br>
+            &bull; <span class="platform">Netflix</span> &mdash; <span class="link">Watch now</span><br>
+            &bull; <span class="platform">AMC+</span> &mdash; <span class="link">Watch now</span><br>
+            &bull; <span class="platform">Prime Video</span> &mdash; <span class="link">Watch now</span>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+    <div class="section-inner">
+        <div class="section-label">Features</div>
+        <h2 class="section-title">Everything you need to stay on top of your shows</h2>
+        <p class="section-desc">No more Googling "when does episode 4 come out" or scrolling through five apps to find where something is streaming.</p>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">&#x1F514;</div>
+                <h3>Episode Alerts</h3>
+                <p>Get a Telegram notification the morning a new episode airs, with the show name, episode number, and time.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#x1F50D;</div>
+                <h3>Find Where to Watch</h3>
+                <p>Use <code>/find</code> to instantly see every platform a show is streaming on, with direct links to start watching.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#x1F4CB;</div>
+                <h3>Track Unlimited Shows</h3>
+                <p>Build your personal watchlist. Track as many shows as you want and see upcoming episodes at a glance.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#x23F0;</div>
+                <h3>Your Schedule, Your Time</h3>
+                <p>Pick your notification time and timezone so alerts arrive exactly when you want them. Morning person? Night owl? You choose.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#x1F465;</div>
+                <h3>Multi-User</h3>
+                <p>Everyone gets their own watchlist, settings, and notifications. Share the bot with friends &mdash; everyone's data stays separate.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#x26A1;</div>
+                <h3>Instant &amp; Free</h3>
+                <p>No sign-ups, no subscriptions, no ads. Open it in Telegram, hit /start, and you're tracking shows in seconds.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how-it-works" style="background: rgba(124,58,237,0.03);">
+    <div class="section-inner">
+        <div class="section-label">How It Works</div>
+        <h2 class="section-title">Three steps. Thirty seconds.</h2>
+        <p class="section-desc">It's ridiculously easy to get started.</p>
+
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Open the Bot</h3>
+                <p>Tap the button below or search <strong>@StreamTrackerBot</strong> in Telegram and hit <strong>/start</strong>.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>Track a Show</h3>
+                <p>Type <strong>/track</strong> followed by any show name. Pick from the results and you're locked in.</p>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>Get Notified</h3>
+                <p>That's it. You'll get a message whenever a new episode drops, with a link to watch it.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- COMMANDS -->
+<section id="commands">
+    <div class="section-inner">
+        <div class="section-label">Commands</div>
+        <h2 class="section-title">The full command reference</h2>
+        <p class="section-desc">Everything the bot can do, at a glance.</p>
+
+        <div class="commands-list">
+            <div class="command-row">
+                <div class="command-name">/start</div>
+                <div>
+                    <div class="command-desc">Register with the bot and see the welcome message with all available commands.</div>
+                </div>
+            </div>
+            <div class="command-row">
+                <div class="command-name">/track &lt;show&gt;</div>
+                <div>
+                    <div class="command-desc">Search for a TV show and add it to your tracking list. You'll get notified when new episodes air.</div>
+                    <div class="command-example">/track The Bear</div>
+                </div>
+            </div>
+            <div class="command-row">
+                <div class="command-name">/untrack &lt;show&gt;</div>
+                <div>
+                    <div class="command-desc">Remove a show from your tracking list. Uses fuzzy matching, so you don't need the exact name.</div>
+                    <div class="command-example">/untrack bear</div>
+                </div>
+            </div>
+            <div class="command-row">
+                <div class="command-name">/find &lt;show&gt;</div>
+                <div>
+                    <div class="command-desc">See every streaming platform a show is available on, with direct links to watch. Great for deciding where to sign up.</div>
+                    <div class="command-example">/find Breaking Bad</div>
+                </div>
+            </div>
+            <div class="command-row">
+                <div class="command-name">/list</div>
+                <div>
+                    <div class="command-desc">See all the shows you're currently tracking, with status indicators and next episode info.</div>
+                </div>
+            </div>
+            <div class="command-row">
+                <div class="command-name">/next</div>
+                <div>
+                    <div class="command-desc">View all upcoming episodes across your tracked shows for the next 7 days, grouped by date.</div>
+                </div>
+            </div>
+            <div class="command-row">
+                <div class="command-name">/settings</div>
+                <div>
+                    <div class="command-desc">Change your notification time (6 AM &ndash; 9 AM) and timezone (Eastern, Central, Mountain, Pacific).</div>
+                </div>
+            </div>
+            <div class="command-row">
+                <div class="command-name">/help</div>
+                <div>
+                    <div class="command-desc">Show the full help message with command descriptions and examples.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" style="background: rgba(124,58,237,0.03);">
+    <div class="section-inner">
+        <div class="section-label">FAQ</div>
+        <h2 class="section-title">Questions? We got you.</h2>
+
+        <div class="faq-list">
+            <div class="faq-item">
+                <div class="faq-question">
+                    Is StreamTracker really free?
+                    <span class="faq-arrow">&#x25BC;</span>
+                </div>
+                <div class="faq-answer">
+                    Yep, 100% free. No premium tier, no hidden fees, no ads. Just open it in Telegram and start tracking.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    Do I need to create an account?
+                    <span class="faq-arrow">&#x25BC;</span>
+                </div>
+                <div class="faq-answer">
+                    Nope. Your Telegram account <em>is</em> your account. Just open the bot and hit /start &mdash; that's it. No email, no password, no forms.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    What streaming platforms does it support?
+                    <span class="faq-arrow">&#x25BC;</span>
+                </div>
+                <div class="faq-answer">
+                    StreamTracker checks across 25+ platforms including Netflix, Hulu, Disney+, Max, Prime Video, Paramount+, Apple TV+, Peacock, AMC+, Starz, Crunchyroll, and many more. If a show is streaming somewhere in the US, we'll probably find it.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    When do notifications get sent?
+                    <span class="faq-arrow">&#x25BC;</span>
+                </div>
+                <div class="faq-answer">
+                    By default, you'll get a notification at 9 AM Eastern on the day an episode airs. You can change the time and timezone with the /settings command.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    How many shows can I track?
+                    <span class="faq-arrow">&#x25BC;</span>
+                </div>
+                <div class="faq-answer">
+                    As many as you want. There's no limit. Go wild.
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">
+                    Can my friends use it too?
+                    <span class="faq-arrow">&#x25BC;</span>
+                </div>
+                <div class="faq-answer">
+                    Absolutely! Just send them the link to <strong>@StreamTrackerBot</strong>. Everyone gets their own separate watchlist, settings, and notifications.
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+    <div class="section-inner" style="display:flex; flex-direction:column; align-items:center;">
+        <h2 class="section-title">Ready to never miss an episode?</h2>
+        <p>Join StreamTracker in 30 seconds. No sign-up required.</p>
+        <a class="btn-primary" href="https://t.me/StreamTrackerBot" style="font-size:1.15rem; padding: 1rem 2.5rem;">
+            &#x1F680; Open StreamTracker
+        </a>
+    </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+    <p>StreamTracker &mdash; built by Sean &bull; Powered by <a href="https://www.tvmaze.com" target="_blank">TVmaze</a> &amp; <a href="https://www.watchmode.com" target="_blank">Watchmode</a></p>
+    <p style="margin-top: 0.5rem;">Have questions? Message <a href="https://t.me/StreamTrackerBot">@StreamTrackerBot</a> on Telegram</p>
+</footer>
+
+<!-- FAQ TOGGLE SCRIPT -->
+<script>
+    document.querySelectorAll('.faq-question').forEach(q => {
+        q.addEventListener('click', () => {
+            const item = q.parentElement;
+            item.classList.toggle('open');
+        });
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', e => {
+            e.preventDefault();
+            const target = document.querySelector(a.getAttribute('href'));
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+</script>
+
+</body>
+</html>
