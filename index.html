@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StreamTracker â Never Miss a New Episode</title>
-    <meta name="description" content="StreamTracker is a free Telegram bot that tracks your favorite TV shows and notifies you when new episodes drop. Find where any show is streaming with one command.">
+    <title>StreamTracker - Never Miss a New Episode</title>
+    <meta name="description" content="StreamTracker is a Telegram bot in private beta that tracks your favorite TV shows and notifies you when new episodes drop. Find where any show is streaming with one command.">
     <meta name='impact-site-verification' value='539d2612-5690-4300-8fd5-a66d3614b007'>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -36,7 +36,7 @@
             overflow-x: hidden;
         }
 
-        /* âââ NAV âââ */
+        /* NAV */
         nav {
             position: fixed; top: 0; width: 100%; z-index: 100;
             background: rgba(15, 15, 26, 0.85);
@@ -58,7 +58,7 @@
         }
         .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(124,58,237,0.4); }
 
-        /* âââ HERO âââ */
+        /* HERO */
         .hero {
             min-height: 100vh;
             display: flex; flex-direction: column;
@@ -121,7 +121,7 @@
         .hero-preview .platform { color: var(--orange); }
         .hero-preview .link { color: var(--purple-light); text-decoration: underline; }
 
-        /* âââ SECTION LAYOUT âââ */
+        /* SECTION LAYOUT */
         section { padding: 5rem 2rem; }
         .section-inner { max-width: 1000px; margin: 0 auto; }
         .section-label {
@@ -137,7 +137,7 @@
             max-width: 600px; margin-bottom: 3rem;
         }
 
-        /* âââ FEATURES âââ */
+        /* FEATURES */
         .features-grid {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
@@ -157,7 +157,7 @@
         .feature-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; }
         .feature-card p { color: var(--text-muted); font-size: 0.92rem; }
 
-        /* âââ HOW IT WORKS âââ */
+        /* HOW IT WORKS */
         .steps {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 2rem; counter-reset: step;
@@ -172,7 +172,7 @@
         .step h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.4rem; }
         .step p { color: var(--text-muted); font-size: 0.9rem; }
 
-        /* âââ COMMANDS âââ */
+        /* COMMANDS */
         .commands-list { display: flex; flex-direction: column; gap: 1rem; }
         .command-row {
             display: flex; align-items: flex-start; gap: 1rem;
@@ -194,7 +194,7 @@
             font-family: monospace; font-size: 0.8rem;
         }
 
-        /* âââ FAQ âââ */
+        /* FAQ */
         .faq-list { display: flex; flex-direction: column; gap: 1rem; }
         .faq-item {
             background: var(--bg-card); border: 1px solid var(--border);
@@ -219,7 +219,7 @@
             max-height: 300px; padding: 0 1.5rem 1.25rem;
         }
 
-        /* âââ CTA âââ */
+        /* CTA */
         .cta-section {
             text-align: center;
             background: linear-gradient(180deg, transparent 0%, rgba(124,58,237,0.05) 100%);
@@ -227,7 +227,7 @@
         .cta-section .section-title { max-width: 500px; margin: 0 auto 1rem; }
         .cta-section p { max-width: 450px; margin: 0 auto 2rem; color: var(--text-muted); }
 
-        /* âââ FOOTER âââ */
+        /* FOOTER */
         footer {
             text-align: center; padding: 2.5rem 2rem;
             border-top: 1px solid var(--border);
@@ -236,7 +236,7 @@
         footer a { color: var(--purple-light); text-decoration: none; }
         footer a:hover { text-decoration: underline; }
 
-        /* âââ RESPONSIVE âââ */
+        /* RESPONSIVE */
         @media (max-width: 640px) {
             nav { padding: 0.75rem 1.25rem; }
             section { padding: 3.5rem 1.25rem; }
@@ -250,16 +250,16 @@
 <!-- NAV -->
 <nav>
     <div class="nav-logo">StreamTracker</div>
-    <a class="nav-cta" href="https://t.me/Seans_Stream_Bot">Open in Telegram</a>
+    <a class="nav-cta" href="https://t.me/Seans_Stream_Bot">Join Beta</a>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
     <div class="hero-badge">
-        <span>&#9679;</span> Free &amp; live on Telegram
+        <span>&#9679;</span> Private beta on Telegram
     </div>
     <h1>Never miss a <span class="highlight">new episode</span> again</h1>
-    <p>StreamTracker is a Telegram bot that tracks your shows, tells you where they're streaming, and pings you when new episodes drop.</p>
+    <p>StreamTracker is a Telegram bot in private beta that tracks your shows, tells you where they are streaming, and pings you when new episodes drop.</p>
     <div class="hero-buttons">
         <a class="btn-primary" href="https://t.me/Seans_Stream_Bot">
             &#x1F4F1; Start Tracking
@@ -311,12 +311,12 @@
             <div class="feature-card">
                 <div class="feature-icon">&#x1F465;</div>
                 <h3>Multi-User</h3>
-                <p>Everyone gets their own watchlist, settings, and notifications. Share the bot with friends &mdash; everyone's data stays separate.</p>
+                <p>Everyone gets their own watchlist, settings, and notifications. User data stays separate by chat.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">&#x26A1;</div>
-                <h3>Instant &amp; Free</h3>
-                <p>No sign-ups, no subscriptions, no ads. Open it in Telegram, hit /start, and you're tracking shows in seconds.</p>
+                <h3>Fast to Start</h3>
+                <p>Open it in Telegram, hit /start, and begin tracking shows in seconds. No separate account setup required.</p>
             </div>
         </div>
     </div>
@@ -380,7 +380,7 @@
             <div class="command-row">
                 <div class="command-name">/find &lt;show&gt;</div>
                 <div>
-                    <div class="command-desc">See every streaming platform a show is available on, with direct links to watch. Great for deciding where to sign up.</div>
+                    <div class="command-desc">See every streaming platform a show is available on, with direct links to watch.</div>
                     <div class="command-example">/find Breaking Bad</div>
                 </div>
             </div>
@@ -399,7 +399,7 @@
             <div class="command-row">
                 <div class="command-name">/settings</div>
                 <div>
-                    <div class="command-desc">Change your notification time (6 AM &ndash; 9 AM) and timezone (Eastern, Central, Mountain, Pacific).</div>
+                    <div class="command-desc">Change your notification time and timezone (Eastern, Central, Mountain, Pacific).</div>
                 </div>
             </div>
             <div class="command-row">
@@ -416,16 +416,16 @@
 <section id="faq" style="background: rgba(124,58,237,0.03);">
     <div class="section-inner">
         <div class="section-label">FAQ</div>
-        <h2 class="section-title">Questions? We got you.</h2>
+        <h2 class="section-title">Before You Try It</h2>
 
         <div class="faq-list">
             <div class="faq-item">
                 <div class="faq-question">
-                    Is StreamTracker really free?
+                    Is StreamTracker in beta?
                     <span class="faq-arrow">&#x25BC;</span>
                 </div>
                 <div class="faq-answer">
-                    Yep, 100% free. No premium tier, no hidden fees, no ads. Just open it in Telegram and start tracking.
+                    Yes. StreamTracker is currently in a small private beta while the notification and tracking flow gets tightened up.
                 </div>
             </div>
             <div class="faq-item">
@@ -466,11 +466,11 @@
             </div>
             <div class="faq-item">
                 <div class="faq-question">
-                    Can my friends use it too?
+                    Can other people use it too?
                     <span class="faq-arrow">&#x25BC;</span>
                 </div>
                 <div class="faq-answer">
-                    Absolutely! Just send them the link to <strong>@Seans_Stream_Bot</strong>. Everyone gets their own separate watchlist, settings, and notifications.
+                    Yes, but it is still a small beta. Everyone gets their own separate watchlist, settings, and notifications.
                 </div>
             </div>
         </div>
@@ -480,8 +480,8 @@
 <!-- CTA -->
 <section class="cta-section">
     <div class="section-inner" style="display:flex; flex-direction:column; align-items:center;">
-        <h2 class="section-title">Ready to never miss an episode?</h2>
-        <p>Join StreamTracker in 30 seconds. No sign-up required.</p>
+        <h2 class="section-title">Want early access?</h2>
+        <p>Open the bot in Telegram and try the current beta.</p>
         <a class="btn-primary" href="https://t.me/Seans_Stream_Bot" style="font-size:1.15rem; padding: 1rem 2.5rem;">
             &#x1F680; Open StreamTracker
         </a>
@@ -515,3 +515,4 @@
 
 </body>
 </html>
+
