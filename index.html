@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StreamTracker - Never Miss a New Episode</title>
-    <meta name="description" content="StreamTracker is a Telegram bot in private beta that tracks your favorite TV shows and notifies you when new episodes drop. Find where any show is streaming with one command.">
+    <meta name="description" content="StreamTracker is a Telegram bot that tracks your TV shows, sends clean episode reminders, and helps you find where shows are streaming.">
     <meta name='impact-site-verification' value='539d2612-5690-4300-8fd5-a66d3614b007'>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -110,16 +110,41 @@
         .btn-secondary:hover { background: var(--bg-card-hover); }
 
         .hero-preview {
-            margin-top: 3rem; max-width: 420px; width: 100%;
+            margin-top: 3rem; max-width: 480px; width: 100%;
             background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 16px; padding: 1.5rem; text-align: left;
-            font-family: monospace; font-size: 0.85rem;
-            color: var(--text-muted); line-height: 1.8;
+            border-radius: 16px; padding: 1rem; text-align: left;
+            color: var(--text-muted); line-height: 1.6;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.25);
         }
-        .hero-preview .cmd { color: var(--cyan); font-weight: 600; }
-        .hero-preview .bot-reply { color: var(--text); }
-        .hero-preview .platform { color: var(--orange); }
-        .hero-preview .link { color: var(--purple-light); text-decoration: underline; }
+        .chat-top {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.25rem 0.35rem 0.9rem; border-bottom: 1px solid var(--border);
+            margin-bottom: 1rem;
+        }
+        .chat-title { color: var(--text); font-weight: 700; font-size: 0.95rem; }
+        .chat-status { color: var(--green); font-size: 0.78rem; }
+        .chat-message {
+            background: rgba(255,255,255,0.045); border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 12px; padding: 0.9rem 1rem; margin-bottom: 0.8rem;
+            font-size: 0.9rem;
+        }
+        .chat-message.user {
+            width: fit-content; margin-left: auto;
+            background: rgba(124,58,237,0.18); color: var(--text);
+        }
+        .chat-message strong { color: var(--text); }
+        .quick-actions {
+            display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.5rem;
+            margin-top: 0.8rem;
+        }
+        .quick-action {
+            border: 1px solid var(--border); background: rgba(6,182,212,0.08);
+            color: var(--cyan); border-radius: 8px; padding: 0.55rem 0.6rem;
+            font-size: 0.78rem; font-weight: 700; text-align: center;
+        }
+        .bot-line { display: block; color: var(--text); }
+        .bot-meta { color: var(--orange); }
+        .bot-link { color: var(--purple-light); text-decoration: underline; }
 
         /* SECTION LAYOUT */
         section { padding: 5rem 2rem; }
@@ -157,6 +182,18 @@
         .feature-card h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.5rem; }
         .feature-card p { color: var(--text-muted); font-size: 0.92rem; }
 
+        /* TRUST */
+        .trust-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1rem;
+        }
+        .trust-item {
+            border-left: 3px solid var(--green);
+            padding: 0.2rem 0 0.2rem 1rem;
+        }
+        .trust-item h3 { font-size: 1rem; margin-bottom: 0.25rem; }
+        .trust-item p { color: var(--text-muted); font-size: 0.92rem; }
+
         /* HOW IT WORKS */
         .steps {
             display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -172,7 +209,7 @@
         .step h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.4rem; }
         .step p { color: var(--text-muted); font-size: 0.9rem; }
 
-        /* COMMANDS */
+        /* WORKFLOW */
         .commands-list { display: flex; flex-direction: column; gap: 1rem; }
         .command-row {
             display: flex; align-items: flex-start; gap: 1rem;
@@ -192,6 +229,9 @@
             background: rgba(6,182,212,0.1); color: var(--cyan);
             padding: 0.15rem 0.6rem; border-radius: 6px;
             font-family: monospace; font-size: 0.8rem;
+        }
+        .flow-note {
+            margin-top: 1.5rem; color: var(--text-muted); font-size: 0.92rem;
         }
 
         /* FAQ */
@@ -239,7 +279,13 @@
         /* RESPONSIVE */
         @media (max-width: 640px) {
             nav { padding: 0.75rem 1.25rem; }
+            .nav-logo { font-size: 1.05rem; }
+            .nav-cta { padding: 0.45rem 0.85rem; }
             section { padding: 3.5rem 1.25rem; }
+            .hero { min-height: auto; padding-top: 6.5rem; }
+            .hero-buttons { flex-direction: column; align-items: stretch; }
+            .btn-primary, .btn-secondary { justify-content: center; }
+            .quick-actions { grid-template-columns: 1fr; }
             .command-row { flex-direction: column; gap: 0.4rem; }
             .command-name { min-width: auto; }
         }
@@ -250,32 +296,45 @@
 <!-- NAV -->
 <nav>
     <div class="nav-logo">StreamTracker</div>
-    <a class="nav-cta" href="https://t.me/Seans_Stream_Bot">Join Beta</a>
+    <a class="nav-cta" href="https://t.me/Seans_Stream_Bot">Open Bot</a>
 </nav>
 
 <!-- HERO -->
 <section class="hero">
     <div class="hero-badge">
-        <span>&#9679;</span> Private beta on Telegram
+        <span>&#9679;</span> Telegram beta with button-first setup
     </div>
-    <h1>Never miss a <span class="highlight">new episode</span> again</h1>
-    <p>StreamTracker is a Telegram bot in private beta that tracks your shows, tells you where they are streaming, and pings you when new episodes drop.</p>
+    <h1>Track your shows. Get a <span class="highlight">clean reminder</span> when episodes drop.</h1>
+    <p>StreamTracker runs inside Telegram. Open the bot, tap a starter button, add shows to your watchlist, and get a reminder when something new airs.</p>
     <div class="hero-buttons">
         <a class="btn-primary" href="https://t.me/Seans_Stream_Bot">
-            &#x1F4F1; Start Tracking
+            Start Tracking
         </a>
-        <a class="btn-secondary" href="#how-it-works">See How It Works</a>
+        <a class="btn-secondary" href="#how-it-works">See the Flow</a>
     </div>
 
     <div class="hero-preview">
-        <div><span class="cmd">/find</span> Breaking Bad</div>
-        <br>
-        <div class="bot-reply">
-            &#x1F4FA; <strong>Breaking Bad</strong><br><br>
-            <strong>Available on:</strong><br>
-            &bull; <span class="platform">Netflix</span> &mdash; <span class="link">Watch now</span><br>
-            &bull; <span class="platform">AMC+</span> &mdash; <span class="link">Watch now</span><br>
-            &bull; <span class="platform">Prime Video</span> &mdash; <span class="link">Watch now</span>
+        <div class="chat-top">
+            <div class="chat-title">StreamTracker</div>
+            <div class="chat-status">active</div>
+        </div>
+        <div class="chat-message user">/start</div>
+        <div class="chat-message">
+            <strong>Welcome to StreamTracker.</strong><br>
+            Start with a button below, or type <code>/track The Bear</code>.
+            <div class="quick-actions">
+                <div class="quick-action">Track Survivor</div>
+                <div class="quick-action">Get Suggestions</div>
+                <div class="quick-action">Find Watch Links</div>
+                <div class="quick-action">Privacy</div>
+            </div>
+        </div>
+        <div class="chat-message">
+            <span class="bot-line"><strong>New Episode Today!</strong></span>
+            <span class="bot-line">The Bear - S3 E1: "Tomorrow"</span>
+            <span class="bot-line">Time: <span class="bot-meta">9 PM ET</span></span>
+            <span class="bot-line">Platform: <span class="bot-meta">Hulu</span></span>
+            <span class="bot-line">Watch: <span class="bot-link">Open link</span></span>
         </div>
     </div>
 </section>
@@ -284,39 +343,63 @@
 <section id="features">
     <div class="section-inner">
         <div class="section-label">Features</div>
-        <h2 class="section-title">Everything you need to stay on top of your shows</h2>
-        <p class="section-desc">No more Googling "when does episode 4 come out" or scrolling through five apps to find where something is streaming.</p>
+        <h2 class="section-title">Built for people who follow more than one show</h2>
+        <p class="section-desc">No more searching release dates, checking multiple apps, or forgetting which service has the next episode.</p>
 
         <div class="features-grid">
             <div class="feature-card">
                 <div class="feature-icon">&#x1F514;</div>
-                <h3>Episode Alerts</h3>
-                <p>Get a Telegram notification the morning a new episode airs, with the show name, episode number, and time.</p>
+                <h3>Clean Episode Reminders</h3>
+                <p>Get a single readable Telegram message with the show, episode, time, platform, and watch link.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">&#x1F50D;</div>
                 <h3>Find Where to Watch</h3>
-                <p>Use <code>/find</code> to instantly see every platform a show is streaming on, with direct links to start watching.</p>
+                <p>Use the bot to find where a show streams, then save your preferred platform for future reminders.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">&#x1F4CB;</div>
-                <h3>Track Unlimited Shows</h3>
-                <p>Build your personal watchlist. Track as many shows as you want and see upcoming episodes at a glance.</p>
+                <h3>Personal Watchlist</h3>
+                <p>Every user gets a separate watchlist, reminder time, timezone, and upcoming-episode view.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">&#x23F0;</div>
                 <h3>Your Schedule, Your Time</h3>
-                <p>Pick your notification time and timezone so alerts arrive exactly when you want them. Morning person? Night owl? You choose.</p>
+                <p>Pick when reminders arrive and change it later from the Telegram command menu.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">&#x1F465;</div>
-                <h3>Multi-User</h3>
-                <p>Everyone gets their own watchlist, settings, and notifications. User data stays separate by chat.</p>
+                <h3>Better Suggestions</h3>
+                <p>Suggested shows rotate and avoid titles you already track, so the bot stays useful as your list grows.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">&#x26A1;</div>
                 <h3>Fast to Start</h3>
-                <p>Open it in Telegram, hit /start, and begin tracking shows in seconds. No separate account setup required.</p>
+                <p>No separate account, email, or password. Your Telegram chat is enough to get started.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- TRUST -->
+<section id="trust" style="background: rgba(16,185,129,0.035);">
+    <div class="section-inner">
+        <div class="section-label">Privacy</div>
+        <h2 class="section-title">Simple data, clear controls</h2>
+        <p class="section-desc">StreamTracker stores only what it needs to run reminders and improve the beta.</p>
+
+        <div class="trust-grid">
+            <div class="trust-item">
+                <h3>What is stored</h3>
+                <p>Your Telegram chat ID, tracked shows, reminder time, timezone, and basic activity timestamps.</p>
+            </div>
+            <div class="trust-item">
+                <h3>What is not stored</h3>
+                <p>No streaming-service passwords, payment information, email address, or phone number.</p>
+            </div>
+            <div class="trust-item">
+                <h3>How to check</h3>
+                <p>Use <code>/privacy</code> inside the bot to see the current data notes at any time.</p>
             </div>
         </div>
     </div>
@@ -326,89 +409,78 @@
 <section id="how-it-works" style="background: rgba(124,58,237,0.03);">
     <div class="section-inner">
         <div class="section-label">How It Works</div>
-        <h2 class="section-title">Three steps. Thirty seconds.</h2>
-        <p class="section-desc">It's ridiculously easy to get started.</p>
+        <h2 class="section-title">Three steps. No new account.</h2>
+        <p class="section-desc">The bot now starts with guided buttons, but commands are still available when you want them.</p>
 
         <div class="steps">
             <div class="step">
                 <div class="step-number">1</div>
-                <h3>Open the Bot</h3>
-                <p>Tap the button below or search <strong>@Seans_Stream_Bot</strong> in Telegram and hit <strong>/start</strong>.</p>
+                <h3>Open StreamTracker</h3>
+                <p>Tap the button below or search <strong>@Seans_Stream_Bot</strong> in Telegram.</p>
             </div>
             <div class="step">
                 <div class="step-number">2</div>
-                <h3>Track a Show</h3>
-                <p>Type <strong>/track</strong> followed by any show name. Pick from the results and you're locked in.</p>
+                <h3>Tap a Starter Action</h3>
+                <p>Choose Track Survivor, Get Suggestions, Find Watch Links, or type a show manually.</p>
             </div>
             <div class="step">
                 <div class="step-number">3</div>
                 <h3>Get Notified</h3>
-                <p>That's it. You'll get a message whenever a new episode drops, with a link to watch it.</p>
+                <p>When a tracked episode airs, StreamTracker sends a readable reminder with the watch link.</p>
             </div>
         </div>
     </div>
 </section>
 
-<!-- COMMANDS -->
+<!-- WORKFLOW -->
 <section id="commands">
     <div class="section-inner">
-        <div class="section-label">Commands</div>
-        <h2 class="section-title">The full command reference</h2>
-        <p class="section-desc">Everything the bot can do, at a glance.</p>
+        <div class="section-label">Inside the Bot</div>
+        <h2 class="section-title">A smoother beta flow</h2>
+        <p class="section-desc">You can still type commands, but the bot now makes the common next step obvious.</p>
 
         <div class="commands-list">
             <div class="command-row">
-                <div class="command-name">/start</div>
+                <div class="command-name">Start</div>
                 <div>
-                    <div class="command-desc">Register with the bot and see the welcome message with all available commands.</div>
+                    <div class="command-desc">The welcome message shows action buttons for tracking, suggestions, watch links, and privacy.</div>
                 </div>
             </div>
             <div class="command-row">
-                <div class="command-name">/track &lt;show&gt;</div>
+                <div class="command-name">Track</div>
                 <div>
-                    <div class="command-desc">Search for a TV show and add it to your tracking list. You'll get notified when new episodes air.</div>
+                    <div class="command-desc">Search for a TV show, pick the right result, and choose your preferred streaming platform.</div>
                     <div class="command-example">/track The Bear</div>
                 </div>
             </div>
             <div class="command-row">
-                <div class="command-name">/untrack &lt;show&gt;</div>
+                <div class="command-name">Discover</div>
                 <div>
-                    <div class="command-desc">Remove a show from your tracking list. Uses fuzzy matching, so you don't need the exact name.</div>
-                    <div class="command-example">/untrack bear</div>
+                    <div class="command-desc">Get rotating suggestions that skip shows you already track.</div>
+                    <div class="command-example">/suggest</div>
                 </div>
             </div>
             <div class="command-row">
-                <div class="command-name">/find &lt;show&gt;</div>
+                <div class="command-name">Find</div>
                 <div>
-                    <div class="command-desc">See every streaming platform a show is available on, with direct links to watch.</div>
+                    <div class="command-desc">Look up streaming options and open watch links directly.</div>
                     <div class="command-example">/find Breaking Bad</div>
                 </div>
             </div>
             <div class="command-row">
-                <div class="command-name">/list</div>
+                <div class="command-name">Review</div>
                 <div>
-                    <div class="command-desc">See all the shows you're currently tracking, with status indicators and next episode info.</div>
+                    <div class="command-desc">Check your watchlist, upcoming episodes, reminder time, and timezone from the command menu.</div>
                 </div>
             </div>
             <div class="command-row">
-                <div class="command-name">/next</div>
+                <div class="command-name">Privacy</div>
                 <div>
-                    <div class="command-desc">View all upcoming episodes across your tracked shows for the next 7 days, grouped by date.</div>
-                </div>
-            </div>
-            <div class="command-row">
-                <div class="command-name">/settings</div>
-                <div>
-                    <div class="command-desc">Change your notification time and timezone (Eastern, Central, Mountain, Pacific).</div>
-                </div>
-            </div>
-            <div class="command-row">
-                <div class="command-name">/help</div>
-                <div>
-                    <div class="command-desc">Show the full help message with command descriptions and examples.</div>
+                    <div class="command-desc">Use <code>/privacy</code> to see what the bot stores and what it does not ask for.</div>
                 </div>
             </div>
         </div>
+        <p class="flow-note">Power users can still use <code>/track</code>, <code>/find</code>, <code>/list</code>, <code>/next</code>, <code>/settings</code>, <code>/privacy</code>, and <code>/help</code>.</p>
     </div>
 </section>
 
@@ -425,7 +497,7 @@
                     <span class="faq-arrow">&#x25BC;</span>
                 </div>
                 <div class="faq-answer">
-                    Yes. StreamTracker is currently in a small private beta while the notification and tracking flow gets tightened up.
+                    Yes. StreamTracker is still a small beta while the tracking, notification, and suggestion flows get tightened up.
                 </div>
             </div>
             <div class="faq-item">
@@ -434,7 +506,7 @@
                     <span class="faq-arrow">&#x25BC;</span>
                 </div>
                 <div class="faq-answer">
-                    Nope. Your Telegram account <em>is</em> your account. Just open the bot and hit /start &mdash; that's it. No email, no password, no forms.
+                    Nope. Your Telegram chat is enough. Open the bot and start from the buttons or command menu.
                 </div>
             </div>
             <div class="faq-item">
@@ -452,7 +524,7 @@
                     <span class="faq-arrow">&#x25BC;</span>
                 </div>
                 <div class="faq-answer">
-                    By default, you'll get a notification at 9 AM Eastern on the day an episode airs. You can change the time and timezone with the /settings command.
+                    By default, reminders are set for 9 AM Eastern. You can change the time and timezone with /settings.
                 </div>
             </div>
             <div class="faq-item">
@@ -461,16 +533,16 @@
                     <span class="faq-arrow">&#x25BC;</span>
                 </div>
                 <div class="faq-answer">
-                    As many as you want. There's no limit. Go wild.
+                    There is no hard beta limit right now, though the product is still being tuned for wider usage.
                 </div>
             </div>
             <div class="faq-item">
                 <div class="faq-question">
-                    Can other people use it too?
+                    What data does it store?
                     <span class="faq-arrow">&#x25BC;</span>
                 </div>
                 <div class="faq-answer">
-                    Yes, but it is still a small beta. Everyone gets their own separate watchlist, settings, and notifications.
+                    Your Telegram chat ID, tracked shows, reminder time, timezone, and basic activity timestamps. It does not ask for streaming passwords, payment details, email, or phone number.
                 </div>
             </div>
         </div>
@@ -480,10 +552,10 @@
 <!-- CTA -->
 <section class="cta-section">
     <div class="section-inner" style="display:flex; flex-direction:column; align-items:center;">
-        <h2 class="section-title">Want early access?</h2>
-        <p>Open the bot in Telegram and try the current beta.</p>
+        <h2 class="section-title">Try the current beta</h2>
+        <p>Open StreamTracker in Telegram, tap a starter action, and track your first show.</p>
         <a class="btn-primary" href="https://t.me/Seans_Stream_Bot" style="font-size:1.15rem; padding: 1rem 2.5rem;">
-            &#x1F680; Open StreamTracker
+            Open StreamTracker
         </a>
     </div>
 </section>
